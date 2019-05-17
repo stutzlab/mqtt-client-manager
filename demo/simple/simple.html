@@ -1,0 +1,116 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<link rel="stylesheet" href="milligram.min.css" />
+    <style>
+        .container .row {
+            margin-bottom: .6rem;
+        }
+    </style>
+		<title>Simple connect</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <script src="../../lib/mqttws31.js"></script>
+		<script src="../../src/common.js"></script>
+		<script src="../../src/MQTTManagedConnection.js"></script>
+		<script src="../../src/MQTTClusterClient.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="column">
+                <h4>MQTT Cluster Servers</h4>
+                <div class="row">
+                    <input type="text" id="host1" placeholder="ex.: server1.mosquitto.org" class="column" />
+                    <input type="text" id="port1" placeholder="ex.: 8080" class="column  column-20"/>
+                    <div class="column column-20"><input type="checkbox" id="ssl1" placeholder="ex.: 8080"/>ssl</div>
+                </div>
+                <div class="row">
+                    <input type="text" id="host2" placeholder="ex.: server2.mosquitto.org" class="column" />
+                    <input type="text" id="port2" placeholder="ex.: 8080" class="column  column-20"/>
+                    <div class="column column-20"><input type="checkbox" id="ssl2" placeholder="ex.: 8080"/>ssl</div>
+                </div>
+                <div class="row">
+                    <input type="text" id="host3" placeholder="ex.: server3.mosquitto.org" class="column" />
+                    <input type="text" id="port3" placeholder="ex.: 8080" class="column  column-20"/>
+                    <div class="column column-20"><input type="checkbox" id="ssl3" placeholder="ex.: 8080"/>ssl</div>
+                </div>
+                <div class="row">
+                    <input type="text" id="username" placeholder="ex.: user123" class="column" />
+                    <input type="text" id="password" placeholder="ex.: pass123" class="column  column-50"/>
+                </div>
+
+                <div class="row">
+                    <button id="connectButton" class="button">Connect to cluster</button>
+                </div>
+            </div>
+            <div class="column column-30">
+                <h4>Status</h4>
+                <textarea id="status" readonly="true" style="height: 70%"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <h4>Subscribe</h4>
+                <input type="text" id="subscribeTopic" placeholder="ex.: sample/topic1" />
+                <button id="subscribeButton" class="button">Subscribe</button>
+                <h4 style="margin-top: 1em">Publish</h4>
+                <input type="text" id="publishTopic" placeholder="ex.: sample/topic1" />
+                <textarea id="publicMessage">message</textarea>
+                <button id="publishButton" class="button">Publish</button>
+            </div>
+            <div class="column column-30">
+                <h4>Messages</h4>
+                <textarea id="receivedMessages" readonly="true" style="height: 85%"></textarea>
+            </div>
+        </div>
+    </div>
+
+	<script type="text/javascript">
+	  var client = null;
+
+		document.querySelector("#connectButton").onclick = function() {
+
+			if(client) {
+				client.disconnect();
+			}
+
+			var serverOptions = [];
+			if(document.querySelector("#host1").value != "") {
+				serverOptions.push({
+					serverHost: document.querySelector("#host1").value,
+					serverPort: document.querySelector("#port1").value,
+					useSSL: document.querySelector("#ssl1").checked,
+					username: document.querySelector("#username").value,
+					password: document.querySelector("#password").value
+				});
+			}
+
+			var clusterOptions = {
+				serverOptions: serverOptions,
+				useRandomServerOrder:false,
+				connectionTimeoutSeconds:3000,
+				connectionKeepaliveSeconds:30,
+				maxRetries:5,
+				timeBetweenRetriesMillis:500,
+				lastWillPayload:'{online:false}',
+				lastWillTopicName: '/users/me',
+				maxServerFallbackRetries: 2
+			}
+
+			document.querySelector("#status").value = JSON.stringify(clusterOptions);
+			client = new MQTTClusterClient(clusterOptions);
+			client.connect();
+
+		}
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Chat sample</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <script src="../lib/mqttws31.js"></script>
+  <script src="../src/MQTTConnectionManager.js"></script>
+  <script src="chat.js"></script>
+</head>
+
+<body>
+    <article id="rooms">
+      <section class="chat">
+        <div class="content">
+          <h1 data-bind="text: $root.viewChat.notificationMessage().sender">Pessoa</h1>
+          <div data-bind="html: $root.viewChat.notificationMessage().text">Mensagem</div>
+        </div>
+        <div class="command">
+            <button onclick="$('#notification').animate({ top: '-80px',}, 300,function(){$('#notification').hide()});">x</button>
+        </div>
+        <div style="clear: both"></div>
+      </section>
+    </article>
+
+  <script>
+  </script>
+
+</body>
+
+</html>
